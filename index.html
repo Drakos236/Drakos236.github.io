@@ -165,19 +165,50 @@ h2{font-size:clamp(2.1rem,5vw,3.4rem);max-width:18ch}
 @media (max-width:460px){.life{grid-template-columns:1fr}}
 
 /* Contact */
-.contact{text-align:left}
+.contact{position:relative;min-height:88vh;min-height:88svh;display:flex;align-items:center}
+.contact::before{content:"";position:absolute;left:0;right:0;top:0;height:180px;background:linear-gradient(var(--surface),rgba(11,13,18,0));pointer-events:none}
+.contact > .wrap{width:100%;position:relative}
 .contact h2{font-size:clamp(2.4rem,7vw,5rem);max-width:14ch;letter-spacing:-.04em}
 .contact h2 em{font-style:normal;color:var(--teal)}
 .mail{display:inline-block;margin-top:32px;font-family:var(--f-title);font-size:clamp(1.15rem,3.6vw,2rem);font-weight:600;text-decoration:none;border-bottom:2px solid var(--teal);padding-bottom:4px;word-break:break-all}
 @media (hover:hover){.mail:hover{color:var(--teal)}}
 .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
-footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:.9rem;background:var(--surface)}
+footer{position:relative;z-index:1;border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:.9rem;background:var(--surface)}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 
 /* Apparition au défilement (désactivée si réduction des animations ou sans JS) */
 .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
 .js .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}}
+
+/* ---------- Animations de section (uniquement si le visiteur accepte le mouvement) ---------- */
+@media (prefers-reduced-motion:no-preference){
+  /* traits qui se dessinent */
+  .js .reveal .kicker::before{transform:scaleX(0);transform-origin:left;transition:transform .9s .25s cubic-bezier(.2,.7,.2,1)}
+  .js .reveal.in .kicker::before{transform:none}
+  .js .step,.js .life > div{position:relative}
+  .js .step::before,.js .life > div::before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;background:var(--teal);transform:scaleX(0);transform-origin:left;opacity:.9}
+  .js .life > div::before{top:-2px}
+  .js .step.in::before,.js .life > div.in::before{animation:sweep 1.6s cubic-bezier(.2,.7,.2,1) .15s forwards}
+  @keyframes sweep{0%{transform:scaleX(0);opacity:.9}60%{transform:scaleX(1);opacity:.9}100%{transform:scaleX(1);opacity:.25}}
+  .js .life > div:first-child.in::before{animation-name:sweep-keep}
+  @keyframes sweep-keep{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  /* étiquettes qui arrivent en cascade */
+  .js .reveal .tags .chip,.js .reveal .traits .chip{opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease;transition-delay:calc(.35s + var(--k,0) * 60ms)}
+  .js .reveal.in .tags .chip,.js .reveal.in .traits .chip{opacity:1;transform:none}
+  /* illustrations des projets */
+  .play .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 2.2s cubic-bezier(.4,0,.2,1) .2s forwards}
+  .play .draw-2{animation-delay:.7s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .play .eq rect{transform-box:fill-box;transform-origin:center;animation:eq 1.1s ease-in-out infinite alternate;animation-delay:calc(var(--i) * -97ms)}
+  @keyframes eq{0%{transform:scaleY(.35)}100%{transform:scaleY(1.15)}}
+  .play .caret{animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .visual.off *,.tab-hidden *{animation-play-state:paused!important}
+  /* point « en direct » de la recherche de stage */
+  .status i{animation:ping 2.4s ease-out infinite}
+  @keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,138,101,.45)}70%,100%{box-shadow:0 0 0 10px rgba(255,138,101,0)}}
+}
 </style>
 </head>
 <body>
@@ -206,7 +237,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
         <p class="eyebrow">Étudiant ingénieur · Informatique · Toulouse</p>
         <h1>Alexis<br>Heguy<span class="dot">.</span></h1>
         <p class="tagline"><span class="inv">[Du code au matériel, je construis des <strong>systèmes qui tournent en temps réel</strong> : un jeu, une station météo, un assistant vocal.]</span></p>
-        <p class="status"><i aria-hidden="true"></i>Recherche un stage de 8 semaines min. · avril – juillet 2027</p>
+        <p class="status"><i aria-hidden="true"></i>Recherche un stage de 8 semaines min. · à partir du 5 avril 2027</p>
         <div class="cta">
           <a class="btn btn-primary" href="#projets">Voir les projets
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
@@ -223,8 +254,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
     <div class="stats-band">
       <div class="wrap">
         <div class="stats reveal">
-          <div class="stat"><b><em>370+</em> tests</b><span>automatisés sur mon mod Minecraft (JUnit + Game Tests)</span></div>
-          <div class="stat"><b>184 <em>→</em> 16 o</b><span>de pile pour la boucle de mesure de ma station météo STM32</span></div>
+          <div class="stat"><b><em><span data-count="370">370</span>+</em> tests</b><span>automatisés sur mon mod Minecraft (JUnit + Game Tests)</span></div>
+          <div class="stat"><b>184 <em>→</em> <span data-count="16" data-from="184">16</span> o</b><span>de pile pour la boucle de mesure de ma station météo STM32</span></div>
           <div class="stat"><b>Depuis la <em>3ᵉ</em></b><span>je conçois et fais évoluer mon propre site web</span></div>
         </div>
       </div>
@@ -267,7 +298,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
                 <rect width="400" height="300" fill="#0d1117"/>
                 <rect width="400" height="300" fill="url(#grid)"/>
                 <g stroke="#5eead4" stroke-opacity=".5" stroke-width="6" stroke-linecap="square" fill="none">
-                  <path d="M90 90H170M130 110V170M190 190H250M290 130V170M230 110H270"/>
+                  <path d="M90 90H170M130 90V170M190 190H250M290 130V170M230 110H270"/>
                 </g>
                 <g fill="rgba(94,234,212,.08)" stroke="#5eead4" stroke-width="2">
                   <rect x="40" y="60" width="60" height="50" rx="3"/>
@@ -275,14 +306,27 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
                   <rect x="100" y="160" width="90" height="60" rx="3"/>
                   <rect x="260" y="80" width="60" height="50" rx="3"/>
                 </g>
-                <rect x="240" y="170" width="110" height="80" rx="3" fill="rgba(255,138,101,.10)" stroke="#ff8a65" stroke-width="2"/>
+                <rect x="240" y="170" width="110" height="80" rx="3" fill="#ff8a65" fill-opacity=".1" stroke="#ff8a65" stroke-width="2">
+                  <animate attributeName="fill-opacity" values=".1;.1;.32;.1" keyTimes="0;.72;.78;1" dur="7s" begin="dgm.begin" repeatCount="indefinite"/>
+                </rect>
                 <text x="295" y="216" fill="#ff8a65" font-family="Space Grotesk, sans-serif" font-size="13" font-weight="600" text-anchor="middle" letter-spacing="2">BOSS</text>
-                <circle cx="70" cy="85" r="6" fill="#f4f6fa"/>
-                <circle cx="70" cy="85" r="13" fill="none" stroke="#f4f6fa" stroke-opacity=".3"/>
+                <g>
+                  <circle cx="70" cy="88" r="6" fill="#f4f6fa"/>
+                  <circle cx="70" cy="88" r="13" fill="none" stroke="#f4f6fa" stroke-opacity=".3">
+                    <animate attributeName="r" values="9;16;9" dur="1.4s" begin="dgm.begin" repeatCount="indefinite"/>
+                  </circle>
+                  <animateMotion id="dgm" path="M0 0L60 2L60 102L180 102L220 117" keyPoints="0;1;1" keyTimes="0;.72;1" calcMode="linear" dur="7s" begin="indefinite" repeatCount="indefinite"/>
+                </g>
                 <g font-family="Space Grotesk, sans-serif" font-weight="700">
-                  <text x="128" y="150" fill="#f4f6fa" font-size="18">−12</text>
-                  <text x="150" y="134" fill="#5eead4" font-size="14" opacity=".8">−7</text>
-                  <text x="236" y="56" fill="#ff8a65" font-size="22">CRIT −31</text>
+                  <text x="314" y="198" fill="#f4f6fa" font-size="18">−12
+                    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.74;.77;.9;1" dur="7s" begin="dgm.begin" repeatCount="indefinite"/>
+                    <animateTransform attributeName="transform" type="translate" values="0 0;0 0;0 -26" keyTimes="0;.74;1" dur="7s" begin="dgm.begin" repeatCount="indefinite"/></text>
+                  <text x="262" y="244" fill="#5eead4" font-size="14">−7
+                    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.79;.82;.93;1" dur="7s" begin="dgm.begin" repeatCount="indefinite"/>
+                    <animateTransform attributeName="transform" type="translate" values="0 0;0 0;0 -22" keyTimes="0;.79;1" dur="7s" begin="dgm.begin" repeatCount="indefinite"/></text>
+                  <text x="238" y="160" fill="#ff8a65" font-size="22">CRIT −31
+                    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.84;.86;.96;1" dur="7s" begin="dgm.begin" repeatCount="indefinite"/>
+                    <animateTransform attributeName="transform" type="translate" values="0 0;0 0;0 -20" keyTimes="0;.84;1" dur="7s" begin="dgm.begin" repeatCount="indefinite"/></text>
                 </g>
                 <g font-family="Manrope, sans-serif" font-size="11" fill="#9aa3b2">
                   <text x="20" y="282">seed 4217 · étage 3</text>
@@ -314,8 +358,18 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
                 <g stroke="#1a2029" stroke-width="1">
                   <path d="M30 60H370M30 110H370M30 160H370M30 210H370M30 260H370"/>
                 </g>
-                <polyline points="30.0,159.2 35.8,158.9 41.5,124.1 47.3,146.1 53.1,115.1 58.8,118.3 64.6,130.3 70.3,104.5 76.1,128.1 81.9,108.1 87.6,128.9 93.4,130.7 99.2,116.9 104.9,99.9 110.7,140.3 116.4,138.8 122.2,120.9 128.0,106.6 133.7,127.4 139.5,137.5 145.3,107.3 151.0,154.9 156.8,111.6 162.5,140.0 168.3,146.6 174.1,147.4 179.8,137.8 185.6,112.6 191.4,148.1 197.1,131.0 202.9,133.0 208.6,153.0 214.4,151.0 220.2,184.1 225.9,192.5 231.7,193.1 237.5,176.3 243.2,196.5 249.0,208.4 254.7,198.9 260.5,208.7 266.3,217.9 272.0,191.5 277.8,194.2 283.6,213.9 289.3,191.6 295.1,188.0 300.8,163.0 306.6,163.5 312.4,179.5 318.1,137.0 323.9,176.1 329.7,155.7 335.4,134.3 341.2,163.1 346.9,144.0 352.7,166.6 358.5,133.9 364.2,129.2 370.0,139.7" fill="none" stroke="#6b7586" stroke-width="1.4" stroke-linejoin="round"/>
-                <polyline points="30.0,159.2 35.8,159.0 41.5,147.4 47.3,147.1 53.1,140.7 58.8,136.9 64.6,136.0 70.3,132.0 76.1,131.6 81.9,129.2 87.6,126.2 93.4,123.4 99.2,122.7 104.9,118.1 110.7,120.6 116.4,122.6 122.2,121.7 128.0,121.9 133.7,121.8 139.5,124.8 145.3,122.6 151.0,125.0 156.8,124.5 162.5,128.5 168.3,129.2 174.1,130.0 179.8,131.7 185.6,132.3 191.4,134.4 197.1,133.7 202.9,136.3 208.6,136.1 214.4,140.0 220.2,144.5 225.9,149.0 231.7,153.6 237.5,157.5 243.2,165.9 249.0,171.9 254.7,178.7 260.5,186.2 266.3,192.7 272.0,196.8 277.8,197.8 283.6,199.9 289.3,199.8 295.1,201.0 300.8,197.6 306.6,193.1 312.4,191.2 318.1,184.0 323.9,179.8 329.7,176.2 335.4,170.3 341.2,165.2 346.9,160.4 352.7,158.3 358.5,155.4 364.2,151.9 370.0,148.0" fill="none" stroke="#5eead4" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+                <polyline class="draw" pathLength="1" points="30.0,159.2 35.8,158.9 41.5,124.1 47.3,146.1 53.1,115.1 58.8,118.3 64.6,130.3 70.3,104.5 76.1,128.1 81.9,108.1 87.6,128.9 93.4,130.7 99.2,116.9 104.9,99.9 110.7,140.3 116.4,138.8 122.2,120.9 128.0,106.6 133.7,127.4 139.5,137.5 145.3,107.3 151.0,154.9 156.8,111.6 162.5,140.0 168.3,146.6 174.1,147.4 179.8,137.8 185.6,112.6 191.4,148.1 197.1,131.0 202.9,133.0 208.6,153.0 214.4,151.0 220.2,184.1 225.9,192.5 231.7,193.1 237.5,176.3 243.2,196.5 249.0,208.4 254.7,198.9 260.5,208.7 266.3,217.9 272.0,191.5 277.8,194.2 283.6,213.9 289.3,191.6 295.1,188.0 300.8,163.0 306.6,163.5 312.4,179.5 318.1,137.0 323.9,176.1 329.7,155.7 335.4,134.3 341.2,163.1 346.9,144.0 352.7,166.6 358.5,133.9 364.2,129.2 370.0,139.7" fill="none" stroke="#6b7586" stroke-width="1.4" stroke-linejoin="round"/>
+                <polyline class="draw draw-2" pathLength="1" points="30.0,159.2 35.8,159.0 41.5,147.4 47.3,147.1 53.1,140.7 58.8,136.9 64.6,136.0 70.3,132.0 76.1,131.6 81.9,129.2 87.6,126.2 93.4,123.4 99.2,122.7 104.9,118.1 110.7,120.6 116.4,122.6 122.2,121.7 128.0,121.9 133.7,121.8 139.5,124.8 145.3,122.6 151.0,125.0 156.8,124.5 162.5,128.5 168.3,129.2 174.1,130.0 179.8,131.7 185.6,132.3 191.4,134.4 197.1,133.7 202.9,136.3 208.6,136.1 214.4,140.0 220.2,144.5 225.9,149.0 231.7,153.6 237.5,157.5 243.2,165.9 249.0,171.9 254.7,178.7 260.5,186.2 266.3,192.7 272.0,196.8 277.8,197.8 283.6,199.9 289.3,199.8 295.1,201.0 300.8,197.6 306.6,193.1 312.4,191.2 318.1,184.0 323.9,179.8 329.7,176.2 335.4,170.3 341.2,165.2 346.9,160.4 352.7,158.3 358.5,155.4 364.2,151.9 370.0,148.0" fill="none" stroke="#5eead4" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+                <defs><clipPath id="wx-clip"><rect x="30" y="50" width="340" height="215"/></clipPath></defs>
+                <g clip-path="url(#wx-clip)">
+                  <g opacity="0">
+                    <animate attributeName="opacity" values="0;1" dur=".6s" begin="wxm.begin+2.2s" fill="freeze"/>
+                    <line x1="30.0" y1="-300" x2="30.0" y2="300" stroke="#5eead4" stroke-opacity=".35" stroke-dasharray="3 4"/>
+                    <circle cx="30.0" cy="159.2" r="9" fill="#5eead4" fill-opacity=".18"/>
+                    <circle cx="30.0" cy="159.2" r="4.5" fill="#f4f6fa"/>
+                    <animateMotion id="wxm" path="M0 0L5.8 -0.2L11.5 -11.8L17.3 -12.1L23.1 -18.5L28.8 -22.3L34.6 -23.2L40.3 -27.2L46.1 -27.6L51.9 -30.0L57.6 -33.0L63.4 -35.8L69.2 -36.5L74.9 -41.1L80.7 -38.6L86.4 -36.6L92.2 -37.5L98.0 -37.3L103.7 -37.4L109.5 -34.4L115.3 -36.6L121.0 -34.2L126.8 -34.7L132.5 -30.7L138.3 -30.0L144.1 -29.2L149.8 -27.5L155.6 -26.9L161.4 -24.8L167.1 -25.5L172.9 -22.9L178.6 -23.1L184.4 -19.2L190.2 -14.7L195.9 -10.2L201.7 -5.6L207.5 -1.7L213.2 6.7L219.0 12.7L224.7 19.5L230.5 27.0L236.3 33.5L242.0 37.6L247.8 38.6L253.6 40.7L259.3 40.6L265.1 41.8L270.8 38.4L276.6 33.9L282.4 32.0L288.1 24.8L293.9 20.6L299.7 17.0L305.4 11.1L311.2 6.0L316.9 1.2L322.7 -0.9L328.5 -3.8L334.2 -7.3L340.0 -11.2" dur="9s" begin="indefinite" repeatCount="indefinite"/>
+                  </g>
+                </g>
                 <g font-family="Manrope, sans-serif" font-size="11.5">
                   <circle cx="38" cy="32" r="4" fill="#6b7586"/><text x="48" y="36" fill="#9aa3b2">mesure brute</text>
                   <circle cx="148" cy="32" r="4" fill="#5eead4"/><text x="158" y="36" fill="#d5dae3">moyenne glissante</text>
@@ -328,10 +382,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
               </svg>
             </div>
             <div>
-              <p class="p-num">02 — EMBARQUÉ</p>
+              <p class="p-num">02 — EMBARQUÉ · EN COURS</p>
               <h3>Worldwide Weather Watcher</h3>
               <p class="p-sub">Station météo embarquée · STM32 · C</p>
-              <p class="p-text">Projet fil rouge du CESI : un prototype de station météo pour navires, sur carte STM32 Nucleo (Cortex-M4), avec capteurs, horloge temps réel et enregistrement sur carte SD.</p>
+              <p class="p-text">Projet fil rouge du bloc électronique (systèmes embarqués) de ma 2ᵉ année, en cours : un prototype de station météo pour navires, sur carte STM32 Nucleo (Cortex-M4), avec capteurs, horloge temps réel et enregistrement sur carte SD.</p>
               <ul class="p-list">
                 <li>Analyse du système en UML : cas d’utilisation, séquences, états</li>
                 <li>Compilation croisée ARM et script de compilation automatique</li>
@@ -347,7 +401,11 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
             <div class="visual">
               <svg viewBox="0 0 400 300" role="img" aria-label="Onde vocale et chaîne de traitement : voix, transcription, IA, synthèse vocale.">
                 <rect width="400" height="300" fill="#0d1117"/>
-                <g fill="#5eead4" opacity=".9"><rect x="40" y="85.5" width="5" height="13.0" rx="2.5"/><rect x="49" y="83.0" width="5" height="18.1" rx="2.5"/><rect x="58" y="76.0" width="5" height="32.0" rx="2.5"/><rect x="67" y="73.2" width="5" height="37.5" rx="2.5"/><rect x="76" y="74.6" width="5" height="34.9" rx="2.5"/><rect x="85" y="81.0" width="5" height="22.0" rx="2.5"/><rect x="94" y="83.0" width="5" height="18.0" rx="2.5"/><rect x="103" y="74.2" width="5" height="35.7" rx="2.5"/><rect x="112" y="71.2" width="5" height="41.6" rx="2.5"/><rect x="121" y="70.9" width="5" height="42.2" rx="2.5"/><rect x="130" y="78.4" width="5" height="27.2" rx="2.5"/><rect x="139" y="83.2" width="5" height="17.6" rx="2.5"/><rect x="148" y="83.0" width="5" height="18.0" rx="2.5"/><rect x="157" y="78.5" width="5" height="27.1" rx="2.5"/><rect x="166" y="79.8" width="5" height="24.5" rx="2.5"/><rect x="175" y="84.9" width="5" height="14.3" rx="2.5"/><rect x="184" y="87.2" width="5" height="9.5" rx="2.5"/><rect x="193" y="86.1" width="5" height="11.7" rx="2.5"/><rect x="202" y="86.5" width="5" height="11.1" rx="2.5"/><rect x="211" y="80.3" width="5" height="23.3" rx="2.5"/><rect x="220" y="77.9" width="5" height="28.1" rx="2.5"/><rect x="229" y="77.9" width="5" height="28.2" rx="2.5"/><rect x="238" y="82.3" width="5" height="19.3" rx="2.5"/><rect x="247" y="84.6" width="5" height="14.8" rx="2.5"/><rect x="256" y="78.7" width="5" height="26.6" rx="2.5"/><rect x="265" y="72.3" width="5" height="39.4" rx="2.5"/><rect x="274" y="70.8" width="5" height="42.5" rx="2.5"/><rect x="283" y="73.1" width="5" height="37.7" rx="2.5"/><rect x="292" y="84.0" width="5" height="15.9" rx="2.5"/><rect x="301" y="83.9" width="5" height="16.2" rx="2.5"/><rect x="310" y="78.3" width="5" height="27.5" rx="2.5"/><rect x="319" y="75.9" width="5" height="32.1" rx="2.5"/><rect x="328" y="78.8" width="5" height="26.4" rx="2.5"/><rect x="337" y="82.6" width="5" height="18.8" rx="2.5"/><rect x="346" y="87.6" width="5" height="8.7" rx="2.5"/><rect x="355" y="86.9" width="5" height="10.2" rx="2.5"/></g>
+                <g class="eq" fill="#5eead4" opacity=".9"><rect style="--i:0" x="40" y="85.5" width="5" height="13.0" rx="2.5"/><rect style="--i:1" x="49" y="83.0" width="5" height="18.1" rx="2.5"/><rect style="--i:2" x="58" y="76.0" width="5" height="32.0" rx="2.5"/><rect style="--i:3" x="67" y="73.2" width="5" height="37.5" rx="2.5"/><rect style="--i:4" x="76" y="74.6" width="5" height="34.9" rx="2.5"/><rect style="--i:5" x="85" y="81.0" width="5" height="22.0" rx="2.5"/><rect style="--i:6" x="94" y="83.0" width="5" height="18.0" rx="2.5"/><rect style="--i:7" x="103" y="74.2" width="5" height="35.7" rx="2.5"/><rect style="--i:8" x="112" y="71.2" width="5" height="41.6" rx="2.5"/><rect style="--i:9" x="121" y="70.9" width="5" height="42.2" rx="2.5"/><rect style="--i:10" x="130" y="78.4" width="5" height="27.2" rx="2.5"/><rect style="--i:11" x="139" y="83.2" width="5" height="17.6" rx="2.5"/><rect style="--i:12" x="148" y="83.0" width="5" height="18.0" rx="2.5"/><rect style="--i:13" x="157" y="78.5" width="5" height="27.1" rx="2.5"/><rect style="--i:14" x="166" y="79.8" width="5" height="24.5" rx="2.5"/><rect style="--i:15" x="175" y="84.9" width="5" height="14.3" rx="2.5"/><rect style="--i:16" x="184" y="87.2" width="5" height="9.5" rx="2.5"/><rect style="--i:17" x="193" y="86.1" width="5" height="11.7" rx="2.5"/><rect style="--i:18" x="202" y="86.5" width="5" height="11.1" rx="2.5"/><rect style="--i:19" x="211" y="80.3" width="5" height="23.3" rx="2.5"/><rect style="--i:20" x="220" y="77.9" width="5" height="28.1" rx="2.5"/><rect style="--i:21" x="229" y="77.9" width="5" height="28.2" rx="2.5"/><rect style="--i:22" x="238" y="82.3" width="5" height="19.3" rx="2.5"/><rect style="--i:23" x="247" y="84.6" width="5" height="14.8" rx="2.5"/><rect style="--i:24" x="256" y="78.7" width="5" height="26.6" rx="2.5"/><rect style="--i:25" x="265" y="72.3" width="5" height="39.4" rx="2.5"/><rect style="--i:26" x="274" y="70.8" width="5" height="42.5" rx="2.5"/><rect style="--i:27" x="283" y="73.1" width="5" height="37.7" rx="2.5"/><rect style="--i:28" x="292" y="84.0" width="5" height="15.9" rx="2.5"/><rect style="--i:29" x="301" y="83.9" width="5" height="16.2" rx="2.5"/><rect style="--i:30" x="310" y="78.3" width="5" height="27.5" rx="2.5"/><rect style="--i:31" x="319" y="75.9" width="5" height="32.1" rx="2.5"/><rect style="--i:32" x="328" y="78.8" width="5" height="26.4" rx="2.5"/><rect style="--i:33" x="337" y="82.6" width="5" height="18.8" rx="2.5"/><rect style="--i:34" x="346" y="87.6" width="5" height="8.7" rx="2.5"/><rect style="--i:35" x="355" y="86.9" width="5" height="10.2" rx="2.5"/></g>
+                <circle cx="60" cy="177" r="4" fill="#ff8a65" opacity="0">
+                  <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.92;1" dur="3.2s" begin="jvm.begin" repeatCount="indefinite"/>
+                  <animateMotion id="jvm" path="M0 0H282" dur="3.2s" begin="indefinite" repeatCount="indefinite"/>
+                </circle>
                 <g font-family="Space Grotesk, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle">
                   <rect x="22" y="160" width="76" height="34" rx="17" fill="#07090d" stroke="#2a323e"/><text x="60" y="181" fill="#d5dae3">Voix</text>
                   <rect x="114" y="160" width="84" height="34" rx="17" fill="#07090d" stroke="#5eead4" stroke-opacity=".6"/><text x="156" y="181" fill="#5eead4">Whisper</text>
@@ -358,7 +416,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
                 <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5">
                   <text x="22" y="232" fill="#9aa3b2">$ systemctl --user status jarvis</text>
                   <text x="22" y="252" fill="#5eead4">● active (running)</text>
-                  <text x="22" y="272" fill="#9aa3b2">  relance auto · VM Ubuntu</text>
+                  <text x="22" y="272" fill="#9aa3b2">  relance auto · VM Ubuntu <tspan class="caret" fill="#5eead4">▍</tspan></text>
                 </g>
               </svg>
             </div>
@@ -380,7 +438,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
         <div class="also reveal">
           <div><h4>Site personnel</h4><p>Conçu et développé depuis la 3ᵉ, il évolue avec moi : alexis.heguy.fr.</p></div>
           <div><h4>Snake</h4><p><span class="inv">[Mon premier jeu : un Snake, pour apprendre la boucle de jeu, les collisions et le score.]</span></p></div>
-          <div><h4>Cette page</h4><p>Fond en WebGL (three.js) : un maillage de points qui dérive en temps réel et s’éteint quand on ne le regarde pas.</p></div>
+          <div><h4>Cette page</h4><p>Fond en WebGL (three.js) et illustrations animées : tout s’arrête quand on ne regarde pas, et rien ne bouge si vous avez demandé moins d’animations.</p></div>
         </div>
       </div>
     </section>
@@ -439,7 +497,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
           </div>
           <div class="skill reveal">
             <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 17l6-6-6-6M12 19h8"/></svg>Outils</h3>
-            <div class="tags"><span class="chip">Git / GitHub</span><span class="chip">Linux</span><span class="chip">Gradle</span><span class="chip">Agents IA</span><span class="chip">Anglais <span class="inv">[niveau à préciser]</span></span></div>
+            <div class="tags"><span class="chip">Git / GitHub</span><span class="chip">Linux</span><span class="chip">Gradle</span><span class="chip">Agents IA</span><span class="chip">Anglais · A2–B1</span></div>
           </div>
         </div>
       </div>
@@ -461,19 +519,20 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact" class="contact" aria-labelledby="t-contact">
-      <div class="wrap reveal">
+  </div>
+
+  <!-- Contact : transparent, le maillage du haut de page réapparaît derrière -->
+  <section id="contact" class="contact" aria-labelledby="t-contact">
+      <div class="wrap reveal" id="contact-text">
         <p class="kicker">Contact</p>
-        <h2 id="t-contact">Un stage d’<em>avril à juillet 2027</em> ? Parlons-en.</h2>
+        <h2 id="t-contact">Un stage à partir du <em>5 avril 2027</em> ? Parlons-en.</h2>
         <a class="mail" href="mailto:alex.heguy@gmail.com">alex.heguy@gmail.com</a>
         <div class="links">
           <a class="btn btn-ghost" href="https://github.com/Drakos236" rel="noopener">GitHub · Drakos236</a>
           <a class="btn btn-ghost" href="https://alexis.heguy.fr" rel="noopener">alexis.heguy.fr</a>
         </div>
       </div>
-    </section>
-  </div>
+  </section>
 </main>
 
 <footer>
@@ -484,15 +543,69 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 </footer>
 
 <script>
-  /* Apparition douce des blocs (aucun contenu n'en dépend : visible sans JS) */
+  /* Apparition douce, compteurs et illustrations animées.
+     Aucun contenu n'en dépend : sans JS ou avec la réduction des animations, tout est visible et immobile. */
   (function () {
-    document.documentElement.classList.add('js');
+    var root = document.documentElement;
+    root.classList.add('js');
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)');
+    function still() { return !!(reduce && reduce.matches); }
+
+    /* index de cascade pour les étiquettes */
+    document.querySelectorAll('.tags, .traits').forEach(function (g) {
+      g.querySelectorAll('.chip').forEach(function (c, k) { c.style.setProperty('--k', k); });
+    });
+
+    /* compteurs : de data-from (0 par défaut) jusqu'à la valeur affichée */
+    function count(el) {
+      if (still()) return;
+      var to = +el.dataset.count, from = +(el.dataset.from || 0), t0 = null, D = 1400;
+      el.textContent = from;
+      function tick(now) {
+        if (t0 === null) t0 = now;
+        var p = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(from + (to - from) * e);
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
     var els = document.querySelectorAll('.reveal');
     if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('in');
+        en.target.querySelectorAll('[data-count]').forEach(count);
+        io.unobserve(en.target);
+      });
     }, { rootMargin: '0px 0px -8% 0px' });
     els.forEach(function (e) { io.observe(e); });
+
+    /* illustrations : démarrent quand elles sont à l'écran, s'arrêtent hors écran ou onglet caché */
+    var visuals = [].slice.call(document.querySelectorAll('.visual'));
+    var seen = new Map();
+    function apply(v) {
+      var svg = v.querySelector('svg'), on = seen.get(v) && !document.hidden && !still();
+      if (!svg || !svg.pauseAnimations) return;
+      if (on) {
+        if (!v.dataset.started) {
+          v.dataset.started = '1';
+          v.classList.add('play');
+          svg.querySelectorAll('[begin="indefinite"]').forEach(function (a) { try { a.beginElement(); } catch (e) {} });
+        }
+        svg.unpauseAnimations(); v.classList.remove('off');
+      } else {
+        svg.pauseAnimations(); v.classList.add('off');
+      }
+    }
+    var vio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { seen.set(en.target, en.isIntersecting); apply(en.target); });
+    }, { threshold: 0.15 });
+    visuals.forEach(function (v) { vio.observe(v); });
+    function all() { root.classList.toggle('tab-hidden', document.hidden); visuals.forEach(apply); }
+    document.addEventListener('visibilitychange', all);
+    if (reduce && reduce.addEventListener) reduce.addEventListener('change', all);
   })();
 </script>
 
@@ -504,7 +617,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
    - prefers-reduced-motion                -> une seule image fixe, aucune animation ;
    - onglet en arrière-plan                -> boucle arrêtée (et aussi hors du premier écran) ;
    - écran tactile (pas de survol)         -> pas de lueur, rien ne dépend du pointeur.
-   Contraste : derrière le texte du héros, chaque pixel est plafonné à #12594f
+   Contraste : derrière le texte du héros et du contact, chaque pixel est plafonné à #12594f
    (luminance 0,079), ce qui garantit >= 5,8:1 pour le texte le plus clair-gris.
    ===================================================================== */
 const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js';
@@ -540,19 +653,23 @@ async function start() {
 
   let W = 0, H = 0, DPR = 1;
   const heroText = document.getElementById('hero-text');
+  const contactText = document.getElementById('contact-text');
 
   /* --- uniforms partagés : zone plafonnée + lueur --- */
   const shared = {
-    uRect: { value: new THREE.Vector4(0, 0, 0, 0) },   // zone du texte, en pixels du tampon
+    uRect: { value: new THREE.Vector4(0, 0, 0, 0) },   // texte du héros, en pixels du tampon
+    uRect2: { value: new THREE.Vector4(0, 0, 0, 0) },  // texte du contact
     uFeather: { value: 60 },
     uCap: { value: new THREE.Vector3(0x12 / 255, 0x59 / 255, 0x4f / 255) },
   };
   const capGLSL = `
-    uniform vec4 uRect; uniform float uFeather; uniform vec3 uCap;
+    uniform vec4 uRect; uniform vec4 uRect2; uniform float uFeather; uniform vec3 uCap;
+    float inRect(vec4 r, vec2 p) {
+      vec2 d = max(max(r.xy - p, p - r.zw), 0.0);
+      return 1.0 - smoothstep(0.0, uFeather, length(d));
+    }
     vec3 capColor(vec3 c) {
-      vec2 p = gl_FragCoord.xy;
-      vec2 d = max(max(uRect.xy - p, p - uRect.zw), 0.0);
-      float inside = 1.0 - smoothstep(0.0, uFeather, length(d));
+      float inside = max(inRect(uRect, gl_FragCoord.xy), inRect(uRect2, gl_FragCoord.xy));
       return mix(c, min(c, uCap), inside);
     }`;
 
@@ -646,10 +763,11 @@ async function start() {
     glowMat.uniforms.uR.value = Math.max(220, Math.min(W, H) * 0.42) * DPR;
   }
 
-  function updateRect() {
-    const r = heroText.getBoundingClientRect(), pad = 28;
-    shared.uRect.value.set((r.left - pad) * DPR, (H - r.bottom - pad) * DPR, (r.right + pad) * DPR, (H - r.top + pad) * DPR);
+  function setRect(u, el) {
+    const r = el.getBoundingClientRect(), pad = 28;
+    u.set((r.left - pad) * DPR, (H - r.bottom - pad) * DPR, (r.right + pad) * DPR, (H - r.top + pad) * DPR);
   }
+  function updateRect() { setRect(shared.uRect.value, heroText); setRect(shared.uRect2.value, contactText); }
 
   let last = performance.now();
   function step(dt) {
@@ -724,8 +842,14 @@ async function start() {
   reduceMQ.addEventListener?.('change', () => { bindPointer(); sync(); frame(performance.now(), true); });
   fineMQ.addEventListener?.('change', bindPointer);
   addEventListener('resize', () => { resize(); if (!raf) frame(performance.now(), true); }, { passive: true });
-  addEventListener('scroll', () => { if (!raf) { updateRect(); renderer.render(scene, camera); } }, { passive: true });
-  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; sync(); }).observe(document.querySelector('.hero'));
+  addEventListener('scroll', () => { if (!raf && reduceMQ.matches) { updateRect(); renderer.render(scene, camera); } }, { passive: true });
+  /* le fond n'est visible qu'au premier écran et derrière le contact : ailleurs, la boucle dort */
+  const windows = new Map();
+  const wio = new IntersectionObserver((entries) => {
+    for (const e of entries) windows.set(e.target, e.isIntersecting);
+    heroVisible = [...windows.values()].some(Boolean); sync();
+  });
+  wio.observe(document.querySelector('.hero')); wio.observe(document.getElementById('contact'));
 }
 
 start().catch(fallback);
