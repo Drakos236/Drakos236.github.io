@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alexis Heguy — Portfolio</title>
+<meta name="description" content="Alexis Heguy, étudiant ingénieur en informatique au CESI Toulouse-Labège : mod Minecraft Dungeon RPG, station météo embarquée STM32, assistant vocal Jarvis.">
+<meta name="theme-color" content="#07090d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   Deux couleurs : --teal (teinte le fond animé) et --coral. Le reste : neutres.
+   Contrastes vérifiés (WCAG) :
+     --text  #f4f6fa sur --bg #07090d ......... 18,6:1
+     --soft  #d5dae3 sur le fond animé plafonné (#12594f max) 5,8:1
+     --muted #9aa3b2 sur --surface #0b0d12 .... 7,6:1
+     --teal  #5eead4 sur --surface ............ 13,4:1
+     --coral #ff8a65 sur --surface ............ 8,4:1
+   ===================================================================== */
+:root{
+  --bg:#07090d; --surface:#0b0d12; --panel:#10141b; --line:#1d232d;
+  --text:#f4f6fa; --soft:#d5dae3; --muted:#9aa3b2;
+  --teal:#5eead4; --teal-ink:#04211c; --coral:#ff8a65;
+  --f-title:"Space Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-text:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --gutter:clamp(16px,5vw,64px); --max:1160px; --radius:18px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--text);font:400 1.0625rem/1.65 var(--f-text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f-title);line-height:1.05;letter-spacing:-.025em;margin:0;font-weight:600}
+p{margin:0}
+a{color:inherit}
+img,svg{display:block;max-width:100%}
+::selection{background:var(--teal);color:var(--teal-ink)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
+.skip{position:absolute;left:-999px;top:8px;background:var(--teal);color:var(--teal-ink);padding:8px 14px;border-radius:8px;z-index:50}
+.skip:focus{left:8px}
+
+/* Contenu inventé : encadré par des crochets, repérable d'un coup d'œil */
+.inv{border-bottom:1px dashed rgba(94,234,212,.55)}
+
+/* ---------- Fond animé ---------- */
+#bg{position:fixed;inset:0;width:100%;height:100vh;height:100lvh;z-index:0;pointer-events:none;display:block}
+.no-webgl #bg{display:none}
+
+/* ---------- Navigation ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;background:rgba(7,9,13,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.brand{font-family:var(--f-title);font-weight:700;text-decoration:none;letter-spacing:-.02em;font-size:1.05rem;white-space:nowrap}
+.brand span{color:var(--teal)}
+.nav ul{display:flex;gap:clamp(12px,3vw,32px);list-style:none;margin:0;padding:0}
+.nav ul a{text-decoration:none;color:var(--soft);font-size:.95rem;font-weight:500}
+.nav ul a:focus-visible{color:var(--text)}
+@media (hover:hover){.nav ul a:hover{color:var(--text)}}
+@media (max-width:560px){.nav .hide-sm{display:none}}
+
+/* ---------- Héros (transparent : le fond animé passe dessous) ---------- */
+main{position:relative;z-index:1}
+.hero{min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:96px 0 56px;position:relative}
+.hero > .wrap{width:100%}
+.hero-inner{max-width:820px}
+.eyebrow{font-family:var(--f-title);font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600}
+.hero h1{font-size:clamp(3rem,10vw,7.25rem);font-weight:700;letter-spacing:-.045em;margin:18px 0 22px;line-height:.95}
+.hero h1 .dot{color:var(--teal)}
+.tagline{font-size:clamp(1.15rem,2.4vw,1.45rem);color:var(--soft);max-width:36ch;line-height:1.5}
+.tagline strong{color:var(--text);font-weight:600}
+.status{display:inline-flex;align-items:center;gap:10px;margin-top:28px;padding:8px 16px 8px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:.95rem;color:var(--soft)}
+.status i{width:9px;height:9px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 4px rgba(255,138,101,.18);flex:none}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:12px;font-weight:600;text-decoration:none;font-size:1rem;transition:transform .2s ease,background-color .2s ease,border-color .2s ease}
+.btn-primary{background:var(--teal);color:var(--teal-ink)}
+.btn-ghost{background:var(--bg);color:var(--text);border:1px solid #2a323e}
+@media (hover:hover){
+  .btn:hover{transform:translateY(-2px)}
+  .btn-ghost:hover{border-color:var(--teal)}
+}
+.scroll-hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);color:var(--muted);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;background:var(--bg);padding:4px 10px;border-radius:8px}
+
+/* ---------- Sections opaques ---------- */
+.sheet{background:var(--surface);position:relative;box-shadow:0 -40px 80px rgba(7,9,13,.9)}
+section{padding:clamp(72px,11vw,128px) 0}
+section + section{border-top:1px solid var(--line)}
+.kicker{display:flex;align-items:center;gap:12px;font-family:var(--f-title);font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:18px}
+.kicker::before{content:"";width:28px;height:1px;background:var(--teal)}
+h2{font-size:clamp(2.1rem,5vw,3.4rem);max-width:18ch}
+.lead{color:var(--muted);max-width:60ch;margin-top:18px;font-size:1.1rem}
+
+/* Chiffres clés */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:0}
+.stat{background:var(--surface);padding:28px clamp(18px,3vw,32px)}
+.stat b{display:block;font-family:var(--f-title);font-size:clamp(1.9rem,4vw,2.6rem);font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.stat b em{font-style:normal;color:var(--teal)}
+.stat span{color:var(--muted);font-size:.95rem}
+@media (max-width:720px){.stats{grid-template-columns:1fr}}
+.stats-band{padding:0;transform:translateY(-1px)}
+.stats-band .wrap{padding-top:clamp(40px,6vw,64px)}
+
+/* À propos */
+.about{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(32px,6vw,80px);align-items:start}
+.about p + p{margin-top:16px}
+.about .big{font-family:var(--f-title);font-size:clamp(1.4rem,2.6vw,1.9rem);line-height:1.3;letter-spacing:-.015em;color:var(--text);font-weight:500}
+.about .body{color:var(--muted)}
+.traits{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-block;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--soft);font-size:.92rem;font-weight:500}
+.chip.t{border-color:rgba(94,234,212,.35);color:var(--teal)}
+@media (max-width:860px){.about{grid-template-columns:1fr}}
+
+/* Projets */
+.projects{display:grid;gap:clamp(56px,8vw,96px);margin-top:clamp(48px,7vw,80px)}
+.project{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,5vw,64px);align-items:center}
+.project:nth-child(even) .visual{order:2}
+@media (max-width:860px){.project{grid-template-columns:1fr}.project:nth-child(even) .visual{order:0}}
+.visual{border-radius:var(--radius);background:var(--panel);border:1px solid var(--line);overflow:hidden;aspect-ratio:4/3;position:relative;transition:transform .35s ease,border-color .35s ease}
+.visual svg{width:100%;height:100%}
+@media (hover:hover){.project:hover .visual{transform:translateY(-4px);border-color:#2a3a3a}}
+.p-num{font-family:var(--f-title);color:var(--muted);font-size:.9rem;letter-spacing:.12em}
+.project h3{font-size:clamp(1.8rem,3.6vw,2.5rem);margin:10px 0 6px}
+.p-sub{color:var(--teal);font-weight:600;font-size:.98rem}
+.p-text{color:var(--muted);margin-top:16px}
+.p-list{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:10px}
+.p-list li{position:relative;padding-left:24px;color:var(--soft);font-size:.98rem}
+.p-list li::before{content:"";position:absolute;left:0;top:.72em;width:12px;height:1px;background:var(--teal)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.tags .chip{font-size:.82rem;padding:5px 12px}
+.p-note{margin-top:18px;font-size:.9rem;color:var(--muted)}
+
+/* Aussi */
+.also{margin-top:clamp(64px,9vw,104px);display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.also > div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.also h4{font-family:var(--f-title);font-size:1.15rem;margin:0 0 6px;font-weight:600;letter-spacing:-.01em}
+.also p{color:var(--muted);font-size:.95rem}
+@media (max-width:860px){.also{grid-template-columns:1fr}}
+
+/* Parcours */
+.timeline{margin-top:clamp(40px,6vw,64px);display:grid;gap:0;position:relative}
+.step{display:grid;grid-template-columns:170px 1fr;gap:clamp(16px,4vw,48px);padding:28px 0;border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.when{font-family:var(--f-title);color:var(--teal);font-weight:600;font-size:1rem}
+.when small{display:block;color:var(--muted);font-weight:500;font-size:.85rem;margin-top:2px;font-family:var(--f-text)}
+.step h3{font-size:clamp(1.25rem,2.4vw,1.55rem);letter-spacing:-.015em}
+.step .where{color:var(--soft);margin-top:4px}
+.step p.d{color:var(--muted);margin-top:8px;font-size:.98rem}
+@media (max-width:640px){.step{grid-template-columns:1fr;gap:8px}}
+
+/* Compétences */
+.skills{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:clamp(40px,6vw,64px)}
+.skill{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
+.skill h3{font-size:1.25rem;letter-spacing:-.01em;display:flex;align-items:center;gap:12px}
+.skill h3 svg{width:22px;height:22px;color:var(--teal);flex:none}
+.skill .tags{margin-top:16px}
+@media (max-width:760px){.skills{grid-template-columns:1fr}}
+
+/* Hors écran */
+.life{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:clamp(40px,6vw,64px)}
+.life > div{border-top:2px solid var(--line);padding-top:18px}
+.life > div:first-child{border-top-color:var(--teal)}
+.life b{font-family:var(--f-title);font-size:1.2rem;font-weight:600;display:block;letter-spacing:-.01em}
+.life span{color:var(--muted);font-size:.95rem}
+@media (max-width:860px){.life{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:460px){.life{grid-template-columns:1fr}}
+
+/* Contact */
+.contact{text-align:left}
+.contact h2{font-size:clamp(2.4rem,7vw,5rem);max-width:14ch;letter-spacing:-.04em}
+.contact h2 em{font-style:normal;color:var(--teal)}
+.mail{display:inline-block;margin-top:32px;font-family:var(--f-title);font-size:clamp(1.15rem,3.6vw,2rem);font-weight:600;text-decoration:none;border-bottom:2px solid var(--teal);padding-bottom:4px;word-break:break-all}
+@media (hover:hover){.mail:hover{color:var(--teal)}}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:.9rem;background:var(--surface)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+/* Apparition au défilement (désactivée si réduction des animations ou sans JS) */
+.js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.js .reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#projets">Aller au contenu</a>
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">Alexis Heguy<span>.</span></a>
+    <nav aria-label="Navigation principale">
+      <ul>
+        <li><a href="#projets">Projets</a></li>
+        <li class="hide-sm"><a href="#parcours">Parcours</a></li>
+        <li class="hide-sm"><a href="#competences">Compétences</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ================= HÉROS ================= -->
+  <div class="hero">
+    <div class="wrap">
+      <div class="hero-inner" id="hero-text">
+        <p class="eyebrow">Étudiant ingénieur · Informatique · Toulouse</p>
+        <h1>Alexis<br>Heguy<span class="dot">.</span></h1>
+        <p class="tagline"><span class="inv">[Du code au matériel, je construis des <strong>systèmes qui tournent en temps réel</strong> : un jeu, une station météo, un assistant vocal.]</span></p>
+        <p class="status"><i aria-hidden="true"></i>Recherche un stage de 8 semaines min. · avril – juillet 2027</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#projets">Voir les projets
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+          <a class="btn btn-ghost" href="#contact">Me contacter</a>
+        </div>
+      </div>
+    </div>
+    <a class="scroll-hint" href="#projets" aria-hidden="true" tabindex="-1">Défiler</a>
+  </div>
+
+  <!-- ================= CONTENU OPAQUE ================= -->
+  <div class="sheet">
+
+    <div class="stats-band">
+      <div class="wrap">
+        <div class="stats reveal">
+          <div class="stat"><b><em>370+</em> tests</b><span>automatisés sur mon mod Minecraft (JUnit + Game Tests)</span></div>
+          <div class="stat"><b>184 <em>→</em> 16 o</b><span>de pile pour la boucle de mesure de ma station météo STM32</span></div>
+          <div class="stat"><b>Depuis la <em>3ᵉ</em></b><span>je conçois et fais évoluer mon propre site web</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- À propos -->
+    <section id="apropos" aria-labelledby="t-apropos">
+      <div class="wrap about">
+        <div class="reveal">
+          <p class="kicker">À propos</p>
+          <h2 id="t-apropos">De la programmation au matériel.</h2>
+        </div>
+        <div class="reveal">
+          <p class="big">Étudiant en 2ᵉ année de prépa intégrée au CESI de Toulouse-Labège, filière Informatique.</p>
+          <p class="body">Titulaire d’un bac général spécialités NSI et Mathématiques, je poursuis mon parcours d’ingénieur. Passionné par l’informatique, de la programmation au matériel, j’aime apprendre, comprendre comment les choses fonctionnent et relever de nouveaux défis.</p>
+          <p class="body"><span class="inv">[Ce qui m’attire le plus : le jeu vidéo et le temps réel — là où le code se voit, se joue et doit répondre en quelques millisecondes.]</span></p>
+          <div class="traits">
+            <span class="chip t">Sérieux</span><span class="chip t">Curieux</span><span class="chip t">Empathique</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projets -->
+    <section id="projets" aria-labelledby="t-projets">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="kicker">Projets</p>
+          <h2 id="t-projets">Trois projets, trois façons de faire tourner du code.</h2>
+        </div>
+
+        <div class="projects">
+          <!-- 01 Dungeon RPG -->
+          <article class="project reveal">
+            <div class="visual">
+              <svg viewBox="0 0 400 300" role="img" aria-label="Plan d’un donjon généré procéduralement, avec une salle de boss et des chiffres de dégâts.">
+                <defs>
+                  <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#1a2029" stroke-width="1"/></pattern>
+                </defs>
+                <rect width="400" height="300" fill="#0d1117"/>
+                <rect width="400" height="300" fill="url(#grid)"/>
+                <g stroke="#5eead4" stroke-opacity=".5" stroke-width="6" stroke-linecap="square" fill="none">
+                  <path d="M90 90H170M130 110V170M190 190H250M290 130V170M230 110H270"/>
+                </g>
+                <g fill="rgba(94,234,212,.08)" stroke="#5eead4" stroke-width="2">
+                  <rect x="40" y="60" width="60" height="50" rx="3"/>
+                  <rect x="160" y="70" width="70" height="45" rx="3"/>
+                  <rect x="100" y="160" width="90" height="60" rx="3"/>
+                  <rect x="260" y="80" width="60" height="50" rx="3"/>
+                </g>
+                <rect x="240" y="170" width="110" height="80" rx="3" fill="rgba(255,138,101,.10)" stroke="#ff8a65" stroke-width="2"/>
+                <text x="295" y="216" fill="#ff8a65" font-family="Space Grotesk, sans-serif" font-size="13" font-weight="600" text-anchor="middle" letter-spacing="2">BOSS</text>
+                <circle cx="70" cy="85" r="6" fill="#f4f6fa"/>
+                <circle cx="70" cy="85" r="13" fill="none" stroke="#f4f6fa" stroke-opacity=".3"/>
+                <g font-family="Space Grotesk, sans-serif" font-weight="700">
+                  <text x="128" y="150" fill="#f4f6fa" font-size="18">−12</text>
+                  <text x="150" y="134" fill="#5eead4" font-size="14" opacity=".8">−7</text>
+                  <text x="236" y="56" fill="#ff8a65" font-size="22">CRIT −31</text>
+                </g>
+                <g font-family="Manrope, sans-serif" font-size="11" fill="#9aa3b2">
+                  <text x="20" y="282">seed 4217 · étage 3</text>
+                  <text x="380" y="282" text-anchor="end">Barbare · Mage · Rôdeur</text>
+                </g>
+              </svg>
+            </div>
+            <div>
+              <p class="p-num">01 — JEU</p>
+              <h3>Dungeon RPG</h3>
+              <p class="p-sub">Mod Minecraft · NeoForge · Java</p>
+              <p class="p-text">Un mod qui transforme Minecraft en RPG d’action : des classes jouables, des donjons générés à chaque partie et des combats qui se lisent à l’écran.</p>
+              <ul class="p-list">
+                <li>Classes Barbare et Mage, Rôdeur en cours, chacune avec sa ressource et ses compétences</li>
+                <li>Donjons procéduraux, boss, progression par maîtrises</li>
+                <li>HUD : icônes de compétences, temps de recharge, chiffres de dégâts flottants</li>
+                <li>Plus de 370 tests automatisés (JUnit et Game Tests en jeu)</li>
+              </ul>
+              <div class="tags"><span class="chip">Java</span><span class="chip">NeoForge</span><span class="chip">Gradle</span><span class="chip">Génération procédurale</span><span class="chip">Tests</span></div>
+              <p class="p-note"><span class="inv">[Game design, spécifications et tests en jeu par moi ; implémentation assistée par des agents IA (Claude Code) que je pilote.]</span></p>
+            </div>
+          </article>
+
+          <!-- 02 Station météo -->
+          <article class="project reveal">
+            <div class="visual">
+              <svg viewBox="0 0 400 300" role="img" aria-label="Courbe de mesures brutes bruitées et leur moyenne glissante, lissée.">
+                <rect width="400" height="300" fill="#0d1117"/>
+                <g stroke="#1a2029" stroke-width="1">
+                  <path d="M30 60H370M30 110H370M30 160H370M30 210H370M30 260H370"/>
+                </g>
+                <polyline points="30.0,159.2 35.8,158.9 41.5,124.1 47.3,146.1 53.1,115.1 58.8,118.3 64.6,130.3 70.3,104.5 76.1,128.1 81.9,108.1 87.6,128.9 93.4,130.7 99.2,116.9 104.9,99.9 110.7,140.3 116.4,138.8 122.2,120.9 128.0,106.6 133.7,127.4 139.5,137.5 145.3,107.3 151.0,154.9 156.8,111.6 162.5,140.0 168.3,146.6 174.1,147.4 179.8,137.8 185.6,112.6 191.4,148.1 197.1,131.0 202.9,133.0 208.6,153.0 214.4,151.0 220.2,184.1 225.9,192.5 231.7,193.1 237.5,176.3 243.2,196.5 249.0,208.4 254.7,198.9 260.5,208.7 266.3,217.9 272.0,191.5 277.8,194.2 283.6,213.9 289.3,191.6 295.1,188.0 300.8,163.0 306.6,163.5 312.4,179.5 318.1,137.0 323.9,176.1 329.7,155.7 335.4,134.3 341.2,163.1 346.9,144.0 352.7,166.6 358.5,133.9 364.2,129.2 370.0,139.7" fill="none" stroke="#6b7586" stroke-width="1.4" stroke-linejoin="round"/>
+                <polyline points="30.0,159.2 35.8,159.0 41.5,147.4 47.3,147.1 53.1,140.7 58.8,136.9 64.6,136.0 70.3,132.0 76.1,131.6 81.9,129.2 87.6,126.2 93.4,123.4 99.2,122.7 104.9,118.1 110.7,120.6 116.4,122.6 122.2,121.7 128.0,121.9 133.7,121.8 139.5,124.8 145.3,122.6 151.0,125.0 156.8,124.5 162.5,128.5 168.3,129.2 174.1,130.0 179.8,131.7 185.6,132.3 191.4,134.4 197.1,133.7 202.9,136.3 208.6,136.1 214.4,140.0 220.2,144.5 225.9,149.0 231.7,153.6 237.5,157.5 243.2,165.9 249.0,171.9 254.7,178.7 260.5,186.2 266.3,192.7 272.0,196.8 277.8,197.8 283.6,199.9 289.3,199.8 295.1,201.0 300.8,197.6 306.6,193.1 312.4,191.2 318.1,184.0 323.9,179.8 329.7,176.2 335.4,170.3 341.2,165.2 346.9,160.4 352.7,158.3 358.5,155.4 364.2,151.9 370.0,148.0" fill="none" stroke="#5eead4" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+                <g font-family="Manrope, sans-serif" font-size="11.5">
+                  <circle cx="38" cy="32" r="4" fill="#6b7586"/><text x="48" y="36" fill="#9aa3b2">mesure brute</text>
+                  <circle cx="148" cy="32" r="4" fill="#5eead4"/><text x="158" y="36" fill="#d5dae3">moyenne glissante</text>
+                </g>
+                <g font-family="Space Grotesk, sans-serif">
+                  <rect x="246" y="236" width="134" height="44" rx="10" fill="#07090d" stroke="#ff8a65" stroke-opacity=".6"/>
+                  <text x="313" y="254" fill="#9aa3b2" font-size="10.5" text-anchor="middle" letter-spacing="1.5">PILE DE loop()</text>
+                  <text x="313" y="272" fill="#ff8a65" font-size="15" font-weight="700" text-anchor="middle">184 → 16 octets</text>
+                </g>
+              </svg>
+            </div>
+            <div>
+              <p class="p-num">02 — EMBARQUÉ</p>
+              <h3>Worldwide Weather Watcher</h3>
+              <p class="p-sub">Station météo embarquée · STM32 · C</p>
+              <p class="p-text">Projet fil rouge du CESI : un prototype de station météo pour navires, sur carte STM32 Nucleo (Cortex-M4), avec capteurs, horloge temps réel et enregistrement sur carte SD.</p>
+              <ul class="p-list">
+                <li>Analyse du système en UML : cas d’utilisation, séquences, états</li>
+                <li>Compilation croisée ARM et script de compilation automatique</li>
+                <li>Moyenne glissante à coût constant grâce à un tableau circulaire</li>
+                <li>Optimisation mémoire : pile de la boucle principale réduite de 184 à 16 octets</li>
+              </ul>
+              <div class="tags"><span class="chip">C</span><span class="chip">STM32</span><span class="chip">ARM GCC</span><span class="chip">UML</span><span class="chip">Simulation de capteurs</span></div>
+            </div>
+          </article>
+
+          <!-- 03 Jarvis -->
+          <article class="project reveal">
+            <div class="visual">
+              <svg viewBox="0 0 400 300" role="img" aria-label="Onde vocale et chaîne de traitement : voix, transcription, IA, synthèse vocale.">
+                <rect width="400" height="300" fill="#0d1117"/>
+                <g fill="#5eead4" opacity=".9"><rect x="40" y="85.5" width="5" height="13.0" rx="2.5"/><rect x="49" y="83.0" width="5" height="18.1" rx="2.5"/><rect x="58" y="76.0" width="5" height="32.0" rx="2.5"/><rect x="67" y="73.2" width="5" height="37.5" rx="2.5"/><rect x="76" y="74.6" width="5" height="34.9" rx="2.5"/><rect x="85" y="81.0" width="5" height="22.0" rx="2.5"/><rect x="94" y="83.0" width="5" height="18.0" rx="2.5"/><rect x="103" y="74.2" width="5" height="35.7" rx="2.5"/><rect x="112" y="71.2" width="5" height="41.6" rx="2.5"/><rect x="121" y="70.9" width="5" height="42.2" rx="2.5"/><rect x="130" y="78.4" width="5" height="27.2" rx="2.5"/><rect x="139" y="83.2" width="5" height="17.6" rx="2.5"/><rect x="148" y="83.0" width="5" height="18.0" rx="2.5"/><rect x="157" y="78.5" width="5" height="27.1" rx="2.5"/><rect x="166" y="79.8" width="5" height="24.5" rx="2.5"/><rect x="175" y="84.9" width="5" height="14.3" rx="2.5"/><rect x="184" y="87.2" width="5" height="9.5" rx="2.5"/><rect x="193" y="86.1" width="5" height="11.7" rx="2.5"/><rect x="202" y="86.5" width="5" height="11.1" rx="2.5"/><rect x="211" y="80.3" width="5" height="23.3" rx="2.5"/><rect x="220" y="77.9" width="5" height="28.1" rx="2.5"/><rect x="229" y="77.9" width="5" height="28.2" rx="2.5"/><rect x="238" y="82.3" width="5" height="19.3" rx="2.5"/><rect x="247" y="84.6" width="5" height="14.8" rx="2.5"/><rect x="256" y="78.7" width="5" height="26.6" rx="2.5"/><rect x="265" y="72.3" width="5" height="39.4" rx="2.5"/><rect x="274" y="70.8" width="5" height="42.5" rx="2.5"/><rect x="283" y="73.1" width="5" height="37.7" rx="2.5"/><rect x="292" y="84.0" width="5" height="15.9" rx="2.5"/><rect x="301" y="83.9" width="5" height="16.2" rx="2.5"/><rect x="310" y="78.3" width="5" height="27.5" rx="2.5"/><rect x="319" y="75.9" width="5" height="32.1" rx="2.5"/><rect x="328" y="78.8" width="5" height="26.4" rx="2.5"/><rect x="337" y="82.6" width="5" height="18.8" rx="2.5"/><rect x="346" y="87.6" width="5" height="8.7" rx="2.5"/><rect x="355" y="86.9" width="5" height="10.2" rx="2.5"/></g>
+                <g font-family="Space Grotesk, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle">
+                  <rect x="22" y="160" width="76" height="34" rx="17" fill="#07090d" stroke="#2a323e"/><text x="60" y="181" fill="#d5dae3">Voix</text>
+                  <rect x="114" y="160" width="84" height="34" rx="17" fill="#07090d" stroke="#5eead4" stroke-opacity=".6"/><text x="156" y="181" fill="#5eead4">Whisper</text>
+                  <rect x="214" y="160" width="76" height="34" rx="17" fill="#07090d" stroke="#ff8a65" stroke-opacity=".7"/><text x="252" y="181" fill="#ff8a65">Claude</text>
+                  <rect x="306" y="160" width="72" height="34" rx="17" fill="#07090d" stroke="#5eead4" stroke-opacity=".6"/><text x="342" y="181" fill="#5eead4">Piper</text>
+                </g>
+                <g stroke="#3a4350" stroke-width="1.5"><path d="M98 177h16M198 177h16M290 177h16"/></g>
+                <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5">
+                  <text x="22" y="232" fill="#9aa3b2">$ systemctl --user status jarvis</text>
+                  <text x="22" y="252" fill="#5eead4">● active (running)</text>
+                  <text x="22" y="272" fill="#9aa3b2">  relance auto · VM Ubuntu</text>
+                </g>
+              </svg>
+            </div>
+            <div>
+              <p class="p-num">03 — SYSTÈME</p>
+              <h3>Jarvis</h3>
+              <p class="p-sub">Assistant vocal &amp; infrastructure perso · Linux</p>
+              <p class="p-text">Mon assistant personnel, hébergé sur une machine virtuelle Ubuntu : je lui parle sur Telegram, il me répond à la voix, et il fait avancer mes projets pendant la nuit.</p>
+              <ul class="p-list">
+                <li>Bot Telegram vocal : transcription avec faster-whisper, synthèse vocale avec Piper</li>
+                <li>Services systemd avec relance automatique après plantage ou redémarrage</li>
+                <li>Agents de développement autonomes la nuit, avec budget et heure d’arrêt</li>
+              </ul>
+              <div class="tags"><span class="chip">Linux</span><span class="chip">systemd</span><span class="chip">Python</span><span class="chip">IA</span><span class="chip">Automatisation</span></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="also reveal">
+          <div><h4>Site personnel</h4><p>Conçu et développé depuis la 3ᵉ, il évolue avec moi : alexis.heguy.fr.</p></div>
+          <div><h4>Snake</h4><p><span class="inv">[Mon premier jeu : un Snake, pour apprendre la boucle de jeu, les collisions et le score.]</span></p></div>
+          <div><h4>Cette page</h4><p>Fond en WebGL (three.js) : un maillage de points qui dérive en temps réel et s’éteint quand on ne le regarde pas.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Parcours -->
+    <section id="parcours" aria-labelledby="t-parcours">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="kicker">Parcours</p>
+          <h2 id="t-parcours">Formation.</h2>
+        </div>
+        <div class="timeline">
+          <div class="step reveal">
+            <p class="when">2026 – 2027<small>En cours</small></p>
+            <div><h3>2ᵉ année · Prépa intégrée, filière Informatique</h3><p class="where">CESI École d’ingénieurs · Toulouse-Labège</p>
+              <p class="d">Mathématiques appliquées, physique, systèmes d’information, réseaux, systèmes embarqués. Programmation en Python, C et C++, anglais, économie et droit.</p></div>
+          </div>
+          <div class="step reveal">
+            <p class="when">2025 – 2026</p>
+            <div><h3>1ʳᵉ année · Prépa intégrée</h3><p class="where">CESI École d’ingénieurs · Toulouse-Labège</p>
+              <p class="d">Mathématiques, physique, électricité, mécanique. Algorithmique, programmation, anglais.</p></div>
+          </div>
+          <div class="step reveal">
+            <p class="when">2025</p>
+            <div><h3>Baccalauréat général · Mention Assez Bien</h3><p class="where">Lycée Montesquieu · Cugnaux</p>
+              <p class="d">Spécialités Numérique et Sciences Informatiques (NSI) et Mathématiques.</p></div>
+          </div>
+          <div class="step reveal">
+            <p class="when">2022</p>
+            <div><h3>Diplôme national du brevet · Mention Bien</h3><p class="where">Collège Montesquieu</p>
+              <p class="d">Options Latin et Grec.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compétences -->
+    <section id="competences" aria-labelledby="t-comp">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="kicker">Compétences</p>
+          <h2 id="t-comp">Ce que je sais faire.</h2>
+        </div>
+        <div class="skills">
+          <div class="skill reveal">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg>Programmation</h3>
+            <div class="tags"><span class="chip">C</span><span class="chip">C++</span><span class="chip">Python</span><span class="chip">Java</span><span class="chip">HTML / CSS / JS</span><span class="chip">Algorithmique</span></div>
+          </div>
+          <div class="skill reveal">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>Embarqué &amp; matériel</h3>
+            <div class="tags"><span class="chip">STM32</span><span class="chip">Compilation croisée ARM</span><span class="chip">Gestion de la mémoire</span><span class="chip">Matériel informatique</span><span class="chip">Électricité</span></div>
+          </div>
+          <div class="skill reveal">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 6.5h4a3 3 0 0 1 3 3V14"/></svg>Conception</h3>
+            <div class="tags"><span class="chip">UML / SysML</span><span class="chip">Spécifications</span><span class="chip">Tests automatisés</span><span class="chip">Mathématiques</span></div>
+          </div>
+          <div class="skill reveal">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 17l6-6-6-6M12 19h8"/></svg>Outils</h3>
+            <div class="tags"><span class="chip">Git / GitHub</span><span class="chip">Linux</span><span class="chip">Gradle</span><span class="chip">Agents IA</span><span class="chip">Anglais <span class="inv">[niveau à préciser]</span></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hors écran -->
+    <section id="loisirs" aria-labelledby="t-loisirs">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="kicker">Hors écran</p>
+          <h2 id="t-loisirs">Et quand je ne code pas.</h2>
+        </div>
+        <div class="life">
+          <div class="reveal"><b>Ju-jitsu</b><span>Ceinture verte</span></div>
+          <div class="reveal"><b>Tennis</b><span>8 ans de pratique, et du tennis de table</span></div>
+          <div class="reveal"><b>Jeux vidéo &amp; animés</b><span>Joueur avant d’être développeur</span></div>
+          <div class="reveal"><b>Voyages</b><span>Bali, Thaïlande, États-Unis, Grèce, Espagne</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="contact" aria-labelledby="t-contact">
+      <div class="wrap reveal">
+        <p class="kicker">Contact</p>
+        <h2 id="t-contact">Un stage d’<em>avril à juillet 2027</em> ? Parlons-en.</h2>
+        <a class="mail" href="mailto:alex.heguy@gmail.com">alex.heguy@gmail.com</a>
+        <div class="links">
+          <a class="btn btn-ghost" href="https://github.com/Drakos236" rel="noopener">GitHub · Drakos236</a>
+          <a class="btn btn-ghost" href="https://alexis.heguy.fr" rel="noopener">alexis.heguy.fr</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Alexis Heguy · Toulouse</span>
+    <span>Maquette : les textes entre [crochets] sont des propositions à valider.</span>
+  </div>
+</footer>
+
+<script>
+  /* Apparition douce des blocs (aucun contenu n'en dépend : visible sans JS) */
+  (function () {
+    document.documentElement.classList.add('js');
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+</script>
+
+<script type="module">
+/* =====================================================================
+   Fond animé : maillage de points reliés qui dérive lentement.
+   Garde-fous (prioritaires sur l'effet) :
+   - pas de WebGL ou three.js injoignable  -> fond uni, rien ne casse ;
+   - prefers-reduced-motion                -> une seule image fixe, aucune animation ;
+   - onglet en arrière-plan                -> boucle arrêtée (et aussi hors du premier écran) ;
+   - écran tactile (pas de survol)         -> pas de lueur, rien ne dépend du pointeur.
+   Contraste : derrière le texte du héros, chaque pixel est plafonné à #12594f
+   (luminance 0,079), ce qui garantit >= 5,8:1 pour le texte le plus clair-gris.
+   ===================================================================== */
+const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js';
+const root = document.documentElement;
+const canvas = document.getElementById('bg');
+
+function fallback() { root.classList.add('no-webgl'); }
+
+function hasWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+  } catch (e) { return false; }
+}
+
+async function start() {
+  if (!hasWebGL()) return fallback();
+  let THREE;
+  try { THREE = await import(THREE_URL); } catch (e) { return fallback(); }
+
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  const fineMQ = matchMedia('(hover: hover) and (pointer: fine)');
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
+  } catch (e) { return fallback(); }
+  renderer.setClearColor(0x000000, 0);
+  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stop(); fallback(); });
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(0, 1, 1, 0, -10, 10);
+
+  let W = 0, H = 0, DPR = 1;
+  const heroText = document.getElementById('hero-text');
+
+  /* --- uniforms partagés : zone plafonnée + lueur --- */
+  const shared = {
+    uRect: { value: new THREE.Vector4(0, 0, 0, 0) },   // zone du texte, en pixels du tampon
+    uFeather: { value: 60 },
+    uCap: { value: new THREE.Vector3(0x12 / 255, 0x59 / 255, 0x4f / 255) },
+  };
+  const capGLSL = `
+    uniform vec4 uRect; uniform float uFeather; uniform vec3 uCap;
+    vec3 capColor(vec3 c) {
+      vec2 p = gl_FragCoord.xy;
+      vec2 d = max(max(uRect.xy - p, p - uRect.zw), 0.0);
+      float inside = 1.0 - smoothstep(0.0, uFeather, length(d));
+      return mix(c, min(c, uCap), inside);
+    }`;
+
+  /* --- points --- */
+  const N = Math.round(Math.min(150, Math.max(60, (innerWidth * innerHeight) / 9000)));
+  const pts = [];
+  for (let i = 0; i < N; i++) {
+    const depth = 0.35 + Math.random() * 0.65;          // pseudo-profondeur : taille, vitesse, éclat
+    const a = Math.random() * Math.PI * 2;
+    pts.push({ x: Math.random(), y: Math.random(), vx: Math.cos(a), vy: Math.sin(a), depth, glow: 0 });
+  }
+  const pPos = new Float32Array(N * 3), pCol = new Float32Array(N * 3), pSize = new Float32Array(N), pAlpha = new Float32Array(N);
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3).setUsage(THREE.DynamicDrawUsage));
+  pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3).setUsage(THREE.DynamicDrawUsage));
+  pGeo.setAttribute('size', new THREE.BufferAttribute(pSize, 1).setUsage(THREE.DynamicDrawUsage));
+  pGeo.setAttribute('alpha', new THREE.BufferAttribute(pAlpha, 1).setUsage(THREE.DynamicDrawUsage));
+  const pMat = new THREE.ShaderMaterial({
+    uniforms: { ...shared, uDpr: { value: 1 } },
+    transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `
+      attribute vec3 color; attribute float size; attribute float alpha;
+      uniform float uDpr; varying vec3 vC; varying float vA;
+      void main() { vC = color; vA = alpha; gl_PointSize = size * uDpr;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: capGLSL + `
+      varying vec3 vC; varying float vA;
+      void main() { vec2 q = gl_PointCoord - 0.5; float r = length(q);
+        float a = smoothstep(0.5, 0.15, r) * vA; if (a < 0.01) discard;
+        gl_FragColor = vec4(capColor(vC), a); }`,
+  });
+  scene.add(new THREE.Points(pGeo, pMat));
+
+  /* --- liaisons --- */
+  const MAXSEG = N * 8;
+  const lPos = new Float32Array(MAXSEG * 6), lCol = new Float32Array(MAXSEG * 6), lAlpha = new Float32Array(MAXSEG * 2);
+  const lGeo = new THREE.BufferGeometry();
+  lGeo.setAttribute('position', new THREE.BufferAttribute(lPos, 3).setUsage(THREE.DynamicDrawUsage));
+  lGeo.setAttribute('color', new THREE.BufferAttribute(lCol, 3).setUsage(THREE.DynamicDrawUsage));
+  lGeo.setAttribute('alpha', new THREE.BufferAttribute(lAlpha, 1).setUsage(THREE.DynamicDrawUsage));
+  const lMat = new THREE.ShaderMaterial({
+    uniforms: shared, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `attribute vec3 color; attribute float alpha; varying vec3 vC; varying float vA;
+      void main() { vC = color; vA = alpha; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: capGLSL + `varying vec3 vC; varying float vA;
+      void main() { gl_FragColor = vec4(capColor(vC), vA); }`,
+  });
+  const lines = new THREE.LineSegments(lGeo, lMat);
+  scene.add(lines);
+
+  /* --- lueur du pointeur (souris uniquement) --- */
+  const glowMat = new THREE.ShaderMaterial({
+    uniforms: { uP: { value: new THREE.Vector2(-9999, -9999) }, uR: { value: 300 }, uI: { value: 0 } },
+    transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `void main() { gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+    fragmentShader: `uniform vec2 uP; uniform float uR; uniform float uI;
+      void main() { float d = distance(gl_FragCoord.xy, uP) / uR;
+        float a = exp(-d * d * 2.2) * 0.22 * uI; if (a < 0.003) discard;
+        gl_FragColor = vec4(0.18, 0.78, 0.69, a); }`,   // a <= 0.22 : reste sous le plafond sans le forcer
+  });
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), glowMat);
+  glow.frustumCulled = false; glow.renderOrder = -1;
+  scene.add(glow);
+
+  /* Couleurs (sRGB brutes, plafonnées par le shader derrière le texte) */
+  const DIM = [0.13, 0.55, 0.50], BRIGHT = [0.37, 0.92, 0.83];
+
+  const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, on: 0, target: 0 };
+  function onMove(e) {
+    if (e.pointerType && e.pointerType !== 'mouse') return;   // tactile / stylet : pas de lueur
+    pointer.tx = e.clientX; pointer.ty = e.clientY; pointer.target = 1;
+    if (pointer.x < -999) { pointer.x = pointer.tx; pointer.y = pointer.ty; }
+    if (reduceMQ.matches) frame(performance.now(), true);
+  }
+  function onLeave() { pointer.target = 0; if (reduceMQ.matches) frame(performance.now(), true); }
+  function bindPointer() {
+    removeEventListener('pointermove', onMove); document.removeEventListener('pointerleave', onLeave);
+    if (fineMQ.matches && !reduceMQ.matches) {
+      addEventListener('pointermove', onMove, { passive: true });
+      document.addEventListener('pointerleave', onLeave);
+    } else { pointer.target = 0; pointer.on = 0; }
+  }
+
+  function resize() {
+    W = innerWidth; H = canvas.clientHeight || innerHeight;
+    DPR = Math.min(devicePixelRatio || 1, 1.75);
+    renderer.setPixelRatio(DPR); renderer.setSize(W, H, false);
+    camera.left = 0; camera.right = W; camera.top = H; camera.bottom = 0; camera.updateProjectionMatrix();
+    pMat.uniforms.uDpr.value = DPR;
+    shared.uFeather.value = 60 * DPR;
+    glowMat.uniforms.uR.value = Math.max(220, Math.min(W, H) * 0.42) * DPR;
+  }
+
+  function updateRect() {
+    const r = heroText.getBoundingClientRect(), pad = 28;
+    shared.uRect.value.set((r.left - pad) * DPR, (H - r.bottom - pad) * DPR, (r.right + pad) * DPR, (H - r.top + pad) * DPR);
+  }
+
+  let last = performance.now();
+  function step(dt) {
+    const speed = 0.0000085;                                 // dérive lente (fraction d'écran par ms)
+    for (const p of pts) {
+      p.x += p.vx * speed * dt * p.depth * (H / W);
+      p.y += p.vy * speed * dt * p.depth;
+      if (p.x < -0.05) p.x += 1.1; if (p.x > 1.05) p.x -= 1.1;
+      if (p.y < -0.05) p.y += 1.1; if (p.y > 1.05) p.y -= 1.1;
+    }
+  }
+
+  function build() {
+    const LINK = Math.max(110, Math.min(170, Math.sqrt(W * H) / 7));
+    const gR = 200, px = pointer.x, py = H - pointer.y, gOn = pointer.on;
+    for (let i = 0; i < N; i++) {
+      const p = pts[i], x = p.x * W, y = p.y * H;
+      let g = 0;
+      if (gOn > 0.001) { const dx = x - px, dy = y - py; g = Math.exp(-(dx * dx + dy * dy) / (2 * gR * gR)) * gOn; }
+      p.glow = g; p.sx = x; p.sy = y;
+      const k = 0.45 + 0.55 * p.depth;
+      pPos[i * 3] = x; pPos[i * 3 + 1] = y; pPos[i * 3 + 2] = 0;
+      for (let c = 0; c < 3; c++) pCol[i * 3 + c] = DIM[c] * k + (BRIGHT[c] - DIM[c] * k) * g;
+      pSize[i] = (2.2 + 3.2 * p.depth) * (1 + 0.5 * g);
+      pAlpha[i] = 0.55 + 0.45 * p.depth;
+    }
+    let s = 0;
+    for (let i = 0; i < N && s < MAXSEG; i++) {
+      const a = pts[i];
+      for (let j = i + 1; j < N && s < MAXSEG; j++) {
+        const b = pts[j], dx = a.sx - b.sx, dy = a.sy - b.sy, d2 = dx * dx + dy * dy;
+        if (d2 > LINK * LINK) continue;
+        const f = 1 - Math.sqrt(d2) / LINK;
+        const al = f * f * 0.55 * Math.min(a.depth, b.depth);
+        const g = Math.max(a.glow, b.glow);
+        const o = s * 6;
+        lPos[o] = a.sx; lPos[o + 1] = a.sy; lPos[o + 2] = 0; lPos[o + 3] = b.sx; lPos[o + 4] = b.sy; lPos[o + 5] = 0;
+        for (let c = 0; c < 3; c++) { const v = DIM[c] + (BRIGHT[c] - DIM[c]) * g * 0.8; lCol[o + c] = v; lCol[o + 3 + c] = v; }
+        lAlpha[s * 2] = lAlpha[s * 2 + 1] = Math.min(1, al * (1 + 1.2 * g));
+        s++;
+      }
+    }
+    lGeo.setDrawRange(0, s * 2);
+    for (const k of ['position', 'color', 'size', 'alpha']) pGeo.attributes[k].needsUpdate = true;
+    for (const k of ['position', 'color', 'alpha']) lGeo.attributes[k].needsUpdate = true;
+    glowMat.uniforms.uP.value.set(pointer.x * DPR, (H - pointer.y) * DPR);
+    glowMat.uniforms.uI.value = gOn;
+  }
+
+  let raf = 0, heroVisible = true;
+  function frame(now, once) {
+    const dt = Math.min(64, now - last); last = now;
+    if (!once && !reduceMQ.matches) step(dt);
+    const ease = 1 - Math.pow(0.001, dt / 1000);              // suivi doux du pointeur
+    pointer.x += (pointer.tx - pointer.x) * Math.min(1, ease * 3);
+    pointer.y += (pointer.ty - pointer.y) * Math.min(1, ease * 3);
+    pointer.on += (pointer.target - pointer.on) * Math.min(1, ease * 2);
+    if (once) pointer.on = pointer.target ? pointer.on : 0;
+    updateRect(); build(); renderer.render(scene, camera);
+    if (!once) raf = requestAnimationFrame(frame);
+  }
+  function shouldRun() { return !reduceMQ.matches && !document.hidden && heroVisible; }
+  function run() { if (!raf && shouldRun()) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+  function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; }
+  function sync() { shouldRun() ? run() : stop(); }
+
+  resize(); bindPointer();
+  frame(performance.now(), true);                             // une image fixe, même en mouvement réduit
+  sync();
+
+  document.addEventListener('visibilitychange', sync);
+  reduceMQ.addEventListener?.('change', () => { bindPointer(); sync(); frame(performance.now(), true); });
+  fineMQ.addEventListener?.('change', bindPointer);
+  addEventListener('resize', () => { resize(); if (!raf) frame(performance.now(), true); }, { passive: true });
+  addEventListener('scroll', () => { if (!raf) { updateRect(); renderer.render(scene, camera); } }, { passive: true });
+  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; sync(); }).observe(document.querySelector('.hero'));
+}
+
+start().catch(fallback);
+</script>
+</body>
+</html>
